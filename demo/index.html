@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>cobra-carbonation demo</title>
+
+    <script src="../../webcomponentsjs/webcomponents-loader.js"></script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../../paper-input/paper-input.html">
+    <link rel="import" href="../cobra-carbonation.html">
+
+    <custom-style>
+      <style is="custom-style" include="demo-pages-shared-styles">
+      </style>
+    </custom-style>
+  </head>
+  <body>
+    <div class="vertical-section-container centered">
+      <h3>Basic cobra-carbonation demo</h3>
+      <demo-snippet>
+        <template>
+          <dom-bind>
+            <template>
+              <paper-input label="CO2" value="{{co2}}"></paper-input>
+              <paper-input label="Temperature" value="{{temperature}}"></paper-input>
+              <paper-input label="Volume" value="{{volume}}"></paper-input>
+              <paper-input label="Original wort" value="{{originalWort}}"></paper-input>
+              <paper-input label="Residual Wort" value="{{residualWort}}"></paper-input>
+              <cobra-carbonation
+                      volume="{{volume}}"
+                      co2="{{co2}}"
+                      temperature="{{temperature}}"
+                      sugar="{{sugar}}"
+                      dextrose="{{dextrose}}"
+                      wort="{{wort}}"
+                      original-wort="{{originalWort}}"
+                      residual-wort="{{residualWort}}"
+              ></cobra-carbonation>
+              <h2>Sugar:[[sugar]]</h2>
+              <h2>Dextrose:[[dextrose]]</h2>
+              <h2>Wort:[[wort]]</h2>
+            </template>
+          </dom-bind>
+        </template>
+      </demo-snippet>
+    </div>
+  </body>
+</html>

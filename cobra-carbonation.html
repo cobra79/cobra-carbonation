@@ -1,0 +1,135 @@
+<link rel="import" href="../polymer/polymer-element.html">
+
+<dom-module id="cobra-carbonation">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+  </template>
+
+  <script>
+    /**
+     * `cobra-carbonation`
+     * Calculate necessary sugar/wort to get the right carbonation in handcrafted beer
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class CobraCarbonation extends Polymer.Element {
+      static get is() { return 'cobra-carbonation'; }
+      static get properties() {
+        return {
+            volume:
+                {
+                    notify:true,
+                    type:Number,
+                    value:1
+                },
+            temperature:
+                {
+                    notify:true,
+                    type:Number,
+                    value:20
+                },
+            co2:
+                {
+                    type:Number,
+                    value:6,
+                    notify:true
+                },
+            originalWort:
+                {
+                    notify:true,
+                    type:Number,
+                    value:13
+                },
+            residualWort:
+                {
+                    notify:true,
+                    type:Number,
+                    value:3
+                },
+            sugar:{
+                type:Number,
+                computed:"getSugar(volume, temperature, co2)",
+                reflectToAttribute:true,
+                notify:true
+            },
+            dextrose:{
+                notify:true,
+                type:Number,
+                computed:"getDextrose(sugar)"
+            },
+            wort:{
+                notify:true,
+                type:Number,
+                computed:"getWort(volume, temperature, co2, originalWort, residualWort)"
+            },
+        };
+      }
+
+      getDissolvedCo2(temp)
+      {
+          //Array of CO2 Values (Starting at 0 Degree, increasing by 1 degree
+          //Source: https://hobbybrauer.de/forum/wiki/doku.php/co2-saettigungskonzentration
+
+          //TODO: Interpolate
+
+          let co2DissolveValues = [3.19, 3.08, 2.97, 2.87, 2.78, 2.68, 2.59, 2.51, 2.43,
+          2.35, 2.27, 2.2, 2.13, 2.06, 2, 1.94, 1.88, 1.82, 1.76, 1.71, 1.66, 1.61,1.56,
+          1.51, 1.47, 1.43];
+
+          let degreeLowerIndex = Math.floor(temp);
+
+          if(temp < 0)
+          {
+              degreeLowerIndex = 0;
+          }
+          else if (temp >= 26 )
+          {
+              degreeLowerIndex = 25;
+          }
+
+          let interInt = temp - Math.floor(temp);
+          let lowerWeight =  1- interInt;
+          let heigherWeight = interInt;
+
+          return co2DissolveValues[degreeLowerIndex]*lowerWeight + co2DissolveValues[degreeLowerIndex + 1]*heigherWeight;
+
+      }
+
+        getSugar(volume,temp,co2){
+
+         // let dissolvedCO2 = 10.13 * Math.pow(Math.E, -10.73797 + (2617.25 / (temp + 273.15)));
+           let dissolvedCO2 = this.getDissolvedCo2(temp);
+          let missingCO2  = co2-dissolvedCO2;
+          return Math.round(2*missingCO2*volume*10)/10
+        }
+        getDextrose(sugar)
+        {
+            return Math.round(1.16*sugar*10)/10
+        }
+        getWort(volume,temp,co2,orgW,resW)
+        {
+            let dissolvedCO2 = this.getDissolvedCo2(temp);
+            let missingCO2  = co2-dissolvedCO2;
+           // var o=10.13*Math.pow(Math.E,-10.73797+2617.25/(temp+273.15));
+            //var l=co2-o;
+            var n=8.1*orgW*(1-resW/orgW);
+            return Math.round(missingCO2/n*2*volume*1e3)/1e3
+        }
+    }
+
+    window.customElements.define(CobraCarbonation.is, CobraCarbonation);
+  </script>
+</dom-module>
+
+
+
+
+
+

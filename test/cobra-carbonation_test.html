@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>cobra-carbonation test</title>
+
+    <script src="../../webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../cobra-carbonation.html">
+  </head>
+  <body>
+
+    <test-fixture id="paleAle">
+      <template>
+        <cobra-carbonation
+                volume="20"
+                co2="5.5"
+                temperature="20"
+                original-wort="13"
+                residual-wort="3"
+        ></cobra-carbonation>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="wheatBeer">
+      <template>
+        <cobra-carbonation
+                volume="0.5"
+                co2="7"
+                temperature="22"
+                original-wort="13"
+                residual-wort="3"
+        ></cobra-carbonation>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="maerzen">
+      <template>
+        <cobra-carbonation
+                volume="1"
+                co2="4.5"
+                temperature="8"
+                original-wort="13"
+                residual-wort="3"
+        ></cobra-carbonation>
+      </template>
+    </test-fixture>
+
+
+
+    <script>
+
+      /*
+      Research in literature and different online calculators has shown
+      that different approaches are leading to slightly different results.
+      I assume that that the test is passed if the result is within
+      +/- 5% of the average result of different calculators.
+
+      Result from Hanghofer:
+      20° -> 1,65g/l; Required 5.5 - 1,65 = 3.85 g/l
+      3.85*2 = 7.7 g sugar / l
+      Required 154g sugar
+
+      Result from Fabier
+      7.53 g/l -> Required 150,06 g sugar
+      8.73 g/l -> 174,6 g dextrose
+      94,87 ml Wort (13P -> 3P) -> 1,89 L
+
+      Brewersfriend
+      Calulating with g = volumes / 2;
+      151.1 g sugar
+
+      MMUM
+      164g sugar
+      178g dextrose
+      2L Wort
+       */
+
+      const tolerance = 5;
+
+
+
+      suite('cobra-carbonation', () => {
+
+        test('Pale ale with sugar, fermentation at 20 degrees Celsius, goal 5.5 g CO2/liter, batch of 20 liters', () => {
+
+          //Avg. Sugar: 154.9
+
+          let element = fixture('paleAle');
+
+          assert(element.sugar > 154.9 - (154.9 * tolerance / 100));
+          assert(element.sugar < 154.9 + (154.9 * tolerance / 100));
+
+
+        });
+
+      test('Pale ale with dextrose, fermentation at 20 degrees Celsius, goal 5.5 g CO2/liter, batch of 20 liters', () => {
+
+          //Avg. Dextrose: 176,3 (167,5 up to 185,1)
+          let element = fixture('paleAle');
+
+          assert(element.dextrose > 176.3 - (176.3 * tolerance / 100));
+          assert(element.dextrose < 176.3 + (176.3 * tolerance / 100));
+
+
+      });
+
+      test('Pale ale with wort, fermentation at 20 degrees Celsius, goal 5.5 g CO2/liter, batch of 20 liters', () => {
+
+          //Avg. Wort: 1.945 L
+          let element = fixture('paleAle');
+
+          assert(element.wort > 1.945 - (1.945 * tolerance / 100));
+          assert(element.wort < 1.945 + (1.945 * tolerance / 100));
+
+      });
+
+      //Result from Hanghofer:
+      //22° -> 1,6g/l; Required 7 - 1.6 =  5,4 g/bottle
+      // 5.4*2  -> 10.8 g/sugar / l -> 5.4 g / bottle
+
+      // Result from Fabier
+      // 10.76 g sugar/l - > 5.38 g / bottle
+      // 12.36 g dextrose/l ->  6.18 g / bottle
+      // 134.31 ml  Wort (13P -> 3P)/l -> 67.155 ml / bottle
+
+      //MMUM
+      // 5,9 g sugar / bottle
+      // 6,45 g dextrose / bottle
+      // 72 ml wort / Bottle
+
+      // Avg. Sugar: 5.56 / bottle
+      // Avg. Dextrose: 6.315 / bottle
+      // Avg. Wort: 69.5775 ml / bottle
+
+
+
+      test('Wheat bear with sugar, fermentation at 22 degrees Celsius, goal 7 g CO2/Lister, one bottle 0.5 liters', () => {
+
+          let element = fixture('wheatBeer');
+          let x = 5.56;
+          assert(element.sugar > x - (x * tolerance / 100));
+          assert(element.sugar < x + (x * tolerance / 100));
+
+      });
+
+      test('Wheat bear with dextrose, fermentation at 22 degrees Celsius, goal 7 g CO2/Lister, one bottle 0.5 liters', () => {
+
+          let element = fixture('wheatBeer');
+          let x = 6.315;
+          assert(element.dextrose > x - (x * tolerance / 100));
+          assert(element.dextrose < x + (x * tolerance / 100));
+
+      });
+
+
+      test('Wheat bear with wort, fermentation at 22 degrees Celsius, goal 7 g CO2/Lister, one bottle 0.5 liters', () => {
+
+          let element = fixture('wheatBeer');
+      let x = 0.0695775;
+      assert(element.wort > x - (x * tolerance / 100));
+      assert(element.wort < x + (x * tolerance / 100));
+
+      });
+
+      // Märzen, fermentation at 8 degrees Celsius, goal 4.5 g/Liter, 1 Liter
+
+      //Hanghofer:
+      // 4g suger / liter
+
+
+      // Result from Fabier
+      // 4.06 sugar / liter
+      // 4.71 dextrose / liter
+      // 51.19 ml Wort / liter
+
+      //MMUM
+      // 4.4 sugar / liter
+      // 4.8 dextrose / liter
+      // 53.7 ml wort / liter
+
+      // Avg. Sugar: 4.15
+      // Avg. Dextrose: 4,755
+      // Avg. Wort: 0.052445
+
+      test('Maerzen with sugar, fermentation at 8 degrees Celsius, goal 4.5 g/Liter, 1 Liter', () => {
+
+          let element = fixture('maerzen');
+      let x = 4.15;
+      assert(element.sugar > x - (x * tolerance / 100));
+      assert(element.sugar < x + (x * tolerance / 100));
+
+      });
+
+      test('Maerzen with dextrose, fermentation at 8 degrees Celsius, goal 4.5 g/Liter, 1 Liter', () => {
+
+          let element = fixture('maerzen');
+      let x = 4.755;
+      assert(element.dextrose > x - (x * tolerance / 100));
+      assert(element.dextrose < x + (x * tolerance / 100));
+
+      });
+
+      test('Maerzen with wort, fermentation at 8 degrees Celsius, goal 4.5 g/Liter, 1 Liter', () => {
+
+      let element = fixture('maerzen');
+      let x = 0.052445;
+      assert(element.wort > x - (x * tolerance / 100));
+      assert(element.wort < x + (x * tolerance / 100));
+
+      });
+
+      });
+    </script>
+
+  </body>
+</html>
