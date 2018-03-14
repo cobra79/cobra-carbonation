@@ -1,3 +1,5 @@
+[![Published on webcomponents.org](https://img.shields.io/badge/webcomponents.org-published-blue.svg)](https://www.webcomponents.org/element/cobra79/cobra-carbonation)
+
 # cobra-carbonation
 Polymer element to calculate necessary sugar/wort to get the right carbonation in handcrafted beer
 ## Installation
